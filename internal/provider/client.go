@@ -47,7 +47,7 @@ func (c *Client) Read(filename string, dir string) (string, error) {
 }
 
 const baseURL = "https://github.com/ockam-network/ockam/releases/download/ockam_v%s/ockam.%s-%s"
-const version = "0.56.0"
+const version = "0.57.0"
 const binary = "ockam-v" + version
 
 // downloadBinary downloads the Ockam binary and places it in the user's cache.
