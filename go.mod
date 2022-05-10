@@ -1,4 +1,4 @@
-module github.com/arbourd/terraform-provider-ockam
+module github.com/build-trust/terraform-provider-ockam
 
 go 1.18
 
