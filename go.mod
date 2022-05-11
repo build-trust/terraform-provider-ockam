@@ -2,7 +2,7 @@ module github.com/build-trust/terraform-provider-ockam
 
 go 1.18
 
-require github.com/hashicorp/terraform-plugin-sdk/v2 v2.15.0
+require github.com/hashicorp/terraform-plugin-sdk/v2 v2.16.0
 
 require (
 	github.com/agext/levenshtein v1.2.2 // indirect
@@ -20,7 +20,7 @@ require (
 	github.com/hashicorp/go-plugin v1.4.3 // indirect
 	github.com/hashicorp/go-uuid v1.0.3 // indirect
 	github.com/hashicorp/go-version v1.4.0 // indirect
-	github.com/hashicorp/hc-install v0.3.1 // indirect
+	github.com/hashicorp/hc-install v0.3.2 // indirect
 	github.com/hashicorp/hcl/v2 v2.12.0 // indirect
 	github.com/hashicorp/logutils v1.0.0 // indirect
 	github.com/hashicorp/terraform-exec v0.16.1 // indirect
