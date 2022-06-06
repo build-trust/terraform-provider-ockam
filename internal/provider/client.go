@@ -46,27 +46,23 @@ func (c *Client) Read(filename string, dir string) (string, error) {
 	return strings.TrimSuffix(string(contents), "\n"), err
 }
 
-const baseURL = "https://github.com/ockam-network/ockam/releases/download/ockam_v%s/ockam.%s-%s"
-const version = "0.59.0"
-const binary = "ockam-v" + version
-
 // downloadBinary downloads the Ockam binary and places it in the user's cache.
 func downloadBinary() (string, error) {
 	var goarch string
 	var goos string
 
 	switch runtime.GOARCH {
-	case "amd64":
-		goarch = "x86_64"
-	case "arm64":
-		goarch = "aarch64"
+	case amd64:
+		goarch = x86_64
+	case arm64:
+		goarch = aarch64
 	default:
 		return "", fmt.Errorf("Arch `%s` is not supported by this provider", runtime.GOARCH)
 	}
 	switch runtime.GOOS {
-	case "darwin":
+	case darwin:
 		goos = "apple-darwin"
-	case "linux":
+	case linux:
 		goos = "unknown-linux-gnu"
 	default:
 		return "", fmt.Errorf("OS `%s` is not supported by this provider", runtime.GOOS)
