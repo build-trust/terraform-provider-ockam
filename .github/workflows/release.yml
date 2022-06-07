@@ -84,10 +84,15 @@ jobs:
     steps:
       - name: Checkout Terraform Repo
         uses: actions/checkout@2541b1294d2704b0964813337f33b291d3f8596b
+        with:
+          fetch-depth: 0
 
       - uses: actions/setup-go@fcdc43634adb5f7ae75a9d7a9b9361790f7293e2
         with:
           go-version: 1.18
+
+      - name: Update Repository
+        run: git pull
 
       - name: Create Release Context
         id: release
@@ -105,6 +110,11 @@ jobs:
           release_name: '${{ steps.release.outputs.version }}'
           tag_name: '${{ steps.release.outputs.version }}'
           body: 'Ockam Terraform Provider - ${{ steps.release.outputs.version }}'
+
+      - name: Fetch Recently Created Tag
+        run: |
+          git pull
+          git fetch --tags
 
       - uses: actions/cache@48af2dc4a9e8278b89d7fa154b955c30c6aaab09
         with:
