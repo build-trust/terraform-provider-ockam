@@ -1,8 +1,12 @@
 name: Release
 
 permissions:
+  # Allows us write to the repo
   contents: write
+  # Pull request permission
   pull-requests: write
+  # Actions permission allows us cancel workflows.
+  actions: write
 
 on:
   workflow_dispatch:
