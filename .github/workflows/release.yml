@@ -10,8 +10,8 @@ on:
       tag:
         description: Ockam tag to update homebrew to. e.g. ockam_v0.59.0
         required: true
-    schedule:
-      - cron: '*/10 * * * *'
+  schedule:
+    - cron: '*/10 * * * *'
 
 jobs:
   check_unique:
