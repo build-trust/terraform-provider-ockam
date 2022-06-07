@@ -99,7 +99,11 @@ jobs:
         run: |
           tag_name="${{ needs.check_unique.outputs.tag_name }}"
           version=${tag_name:6}
+          current_sha=$(git rev-parse HEAD)
+
           echo ::set-output name=version::$version
+          echo ::set-output name=sha::$current_sha
+
 
       - name: Create GitHub release
         id: release_upload_url
@@ -110,6 +114,7 @@ jobs:
           release_name: '${{ steps.release.outputs.version }}'
           tag_name: '${{ steps.release.outputs.version }}'
           body: 'Ockam Terraform Provider - ${{ steps.release.outputs.version }}'
+          commitish: '${{ steps.release.outputs.sha }}'
 
       - name: Fetch Recently Created Tag
         run: |
