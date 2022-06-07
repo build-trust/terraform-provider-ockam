@@ -3,8 +3,6 @@ name: Release
 permissions:
   # Allows us write to the repo
   contents: write
-  # Pull request permission
-  pull-requests: write
   # Actions permission allows us cancel workflows.
   actions: write
 
@@ -12,7 +10,7 @@ on:
   workflow_dispatch:
     inputs:
       tag:
-        description: Ockam tag to update homebrew to. e.g. ockam_v0.59.0
+        description: Ockam tag to update terrform version to. e.g. ockam_v0.59.0
         required: true
   schedule:
     - cron: '*/10 * * * *'
@@ -75,9 +73,6 @@ jobs:
           git add $GITHUB_WORKSPACE/internal/provider/constants.go
           git commit -m "Update version number"
           git push --set-upstream origin $release_name
-
-          gh pr create --title "${{ needs.check_unique.outputs.tag_name }} release" --body "Ockam release"\
-           --base main -H $release_name -r mrinalwadhwa -R build-trust/terraform-provider-ockam
 
   # Should be ran after Pull request created above is merged
   create_release:
