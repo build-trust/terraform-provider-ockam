@@ -1,10 +1,8 @@
-name: Release
+name: Release Binaries
 
 permissions:
   # Allows us write to the repo
   contents: write
-  # Actions permission allows us cancel workflows.
-  actions: write
 
 on:
   workflow_dispatch:
@@ -12,75 +10,13 @@ on:
       tag:
         description: Ockam tag to update terrform version to. e.g. ockam_v0.59.0
         required: true
-  schedule:
-    - cron: '*/10 * * * *'
 
 jobs:
-  check_unique:
-    name: Check If Ockam Has An Updated Release
-    runs-on: ubuntu-20.04
-    outputs:
-      unique: ${{ steps.runner.outputs.unique }}
-      tag_name: ${{ steps.runner.outputs.tag_name }}
-
-    steps:
-      - uses: actions/checkout@2541b1294d2704b0964813337f33b291d3f8596b
-        with:
-          fetch-depth: 0
-          ref: cron_log
-
-      - uses: build-trust/.github/actions/ockam_tag_unique_check@custom-actions
-        id: runner
-
-  create_pull_request:
-    name: Create Pull Request
-    runs-on: ubuntu-20.04
-    environment: release
-    needs: check_unique
-    if: ${{ needs.check_unique.outputs.unique == 'true' }}
-    steps:
-      - name: Checkout Terraform Repo
-        uses: actions/checkout@2541b1294d2704b0964813337f33b291d3f8596b
-        with:
-          fetch-depth: 0
-
-      - name: Bump Terraform Version
-        shell: bash
-        run: |
-          set -x
-          tag_name="${{ needs.check_unique.outputs.tag_name }}"
-          version_number=${tag_name:7}
-
-          temp_dir=$(mktemp -d)
-          cp .github/constants.go.template $temp_dir/constants.go
-          cd $temp_dir
-
-          sed -i "s/ockam_version/$version_number/g" constants.go
-
-          cp constants.go $GITHUB_WORKSPACE/internal/provider/constants.go
-          cat $GITHUB_WORKSPACE/internal/provider/constants.go
-
-      - name: Create Pull Request
-        shell: bash
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          git config --global user.email "bot@ockam.io"
-          git config --global user.name "Ockam Bot"
-
-          release_name="${{ needs.check_unique.outputs.tag_name }}_release_$(date +'%s')"
-          git checkout -B $release_name
-          git add $GITHUB_WORKSPACE/internal/provider/constants.go
-          git commit -m "Update version number"
-          git push --set-upstream origin $release_name
-
-  # Should be ran after Pull request created above is merged
+  # Should be ran after Pull request has been merged
   create_release:
     name: Create Release
     runs-on: ubuntu-20.04
     environment: release
-    needs: [check_unique, create_pull_request]
-    if: ${{ needs.check_unique.outputs.unique == 'true' }}
     steps:
       - name: Checkout Terraform Repo
         uses: actions/checkout@2541b1294d2704b0964813337f33b291d3f8596b
@@ -91,19 +27,13 @@ jobs:
         with:
           go-version: 1.18
 
-      - name: Update Repository
-        run: git pull
-
       - name: Create Release Context
         id: release
         run: |
-          tag_name="${{ needs.check_unique.outputs.tag_name }}"
+          tag_name="${{ github.event.inputs.tag }}"
           version=${tag_name:6}
-          current_sha=$(git rev-parse HEAD)
 
           echo ::set-output name=version::$version
-          echo ::set-output name=sha::$current_sha
-
 
       - name: Create GitHub release
         id: release_upload_url
@@ -114,7 +44,7 @@ jobs:
           release_name: '${{ steps.release.outputs.version }}'
           tag_name: '${{ steps.release.outputs.version }}'
           body: 'Ockam Terraform Provider - ${{ steps.release.outputs.version }}'
-          commitish: '${{ steps.release.outputs.sha }}'
+          draft: true
 
       - name: Fetch Recently Created Tag
         run: |

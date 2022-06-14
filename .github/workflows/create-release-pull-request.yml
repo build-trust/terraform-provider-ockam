@@ -1,0 +1,58 @@
+name: Create Bump Pull Request
+
+permissions:
+  # Allows us write to the repo
+  contents: write
+  # Actions permission allows us create pull requests.
+  pull-requests: write
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Ockam tag to update terrform version to. e.g. ockam_v0.59.0
+        required: true
+
+jobs:
+  create_pull_request:
+    name: Create Pull Request
+    runs-on: ubuntu-20.04
+    environment: release
+    steps:
+      - name: Checkout Terraform Repo
+        uses: actions/checkout@2541b1294d2704b0964813337f33b291d3f8596b
+        with:
+          fetch-depth: 0
+
+      - name: Bump Terraform Version
+        shell: bash
+        run: |
+          set -x
+          tag_name="${{ github.event.inputs.tag }}"
+          version_number=${tag_name:7}
+
+          temp_dir=$(mktemp -d)
+          cp .github/constants.go.template $temp_dir/constants.go
+          cd $temp_dir
+
+          sed -i "s/ockam_version/$version_number/g" constants.go
+
+          cp constants.go $GITHUB_WORKSPACE/internal/provider/constants.go
+          cat $GITHUB_WORKSPACE/internal/provider/constants.go
+
+      - name: Create Pull Request
+        shell: bash
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git config --global user.email "bot@ockam.io"
+          git config --global user.name "Ockam Bot"
+
+          release_name="${{ github.event.inputs.tag }}_release_$(date +'%s')"
+          git checkout -B $release_name
+          git add $GITHUB_WORKSPACE/internal/provider/constants.go
+          git commit -m "Update version number"
+          git push --set-upstream origin $release_name
+
+          gh pr create --title "${{ github.event.inputs.tag }} release" --body "Ockam release"\
+           --base main -H $release_name -r mrinalwadhwa
