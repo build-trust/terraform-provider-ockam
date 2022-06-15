@@ -44,7 +44,6 @@ jobs:
           release_name: '${{ steps.release.outputs.version }}'
           tag_name: '${{ steps.release.outputs.version }}'
           body: 'Ockam Terraform Provider - ${{ steps.release.outputs.version }}'
-          draft: true
 
       - name: Fetch Recently Created Tag
         run: |
