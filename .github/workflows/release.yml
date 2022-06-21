@@ -35,6 +35,23 @@ jobs:
 
           echo ::set-output name=version::$version
 
+      - name: Import GPG key
+        id: import_gpg
+        uses: hashicorp/ghaction-import-gpg@78437f97569a473e42b227be84d4084c2dfb49ba # v2.1.0
+        env:
+          GPG_PRIVATE_KEY: ${{ secrets.RELEASE_GPG_PRIVATE_KEY }}
+          PASSPHRASE: ${{ secrets.RELEASE_GPG_PRIVATE_KEY_PASSWORD }}
+
+      - name: Add GPG Key And Sign Tag
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git config --global user.email "${{ secrets.RELEASE_GPG_EMAIL }}"
+          git config --global user.name "${{ secrets.RELEASE_GPG_USER_NAME }}"
+          git config --global user.signingkey "${{ steps.import_gpg.outputs.fingerprint }}"
+          git tag -s ${{ steps.release.outputs.version }}
+          git push --tags
+
       - name: Create GitHub release
         id: release_upload_url
         uses: actions/create-release@4c11c9fe1dcd9636620a16455165783b20fc7ea0
@@ -50,7 +67,7 @@ jobs:
           git pull
           git fetch --tags
 
-      - uses: actions/cache@c3f1317a9e7b1ef106c153ac8c0f00fed3ddbc0d
+      - uses: actions/cache@48af2dc4a9e8278b89d7fa154b955c30c6aaab09
         with:
           path: |
             ~/.cache/go-build
@@ -60,13 +77,6 @@ jobs:
             ${{ runner.os }}-go-
 
       - run: go mod download
-
-      - name: Import GPG key
-        id: import_gpg
-        uses: hashicorp/ghaction-import-gpg@78437f97569a473e42b227be84d4084c2dfb49ba # v2.1.0
-        env:
-          GPG_PRIVATE_KEY: ${{ secrets.RELEASE_GPG_PRIVATE_KEY }}
-          PASSPHRASE: ${{ secrets.RELEASE_GPG_PRIVATE_KEY_PASSWORD }}
 
       - uses: goreleaser/goreleaser-action@68acf3b1adf004ac9c2f0a4259e85c5f66e99bef # v2.9.1
         with:

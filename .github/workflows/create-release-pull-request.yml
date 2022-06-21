@@ -66,5 +66,5 @@ jobs:
           # Checkout to release branch
           git checkout -B ${release_name}
           git add $GITHUB_WORKSPACE/internal/provider/constants.go
-          git commit -m "Update version number"
+          git commit -S -m "Update version number"
           git push --set-upstream origin ${release_name}
