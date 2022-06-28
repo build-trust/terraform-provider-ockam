@@ -35,7 +35,14 @@ jobs:
 
           echo ::set-output name=version::$version
 
-      - name: Import GPG key
+      - name: Import GPG Key For Tags
+        id: tag_gpg
+        uses: hashicorp/ghaction-import-gpg@78437f97569a473e42b227be84d4084c2dfb49ba # v2.1.0
+        env:
+          GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
+          PASSPHRASE: ${{ secrets.GPG_PRIVATE_KEY_PASSWORD }}
+
+      - name: Import GPG Key For Terraform
         id: import_gpg
         uses: hashicorp/ghaction-import-gpg@78437f97569a473e42b227be84d4084c2dfb49ba # v2.1.0
         env:
@@ -46,10 +53,10 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          git config --global user.email "${{ secrets.RELEASE_GPG_EMAIL }}"
-          git config --global user.name "${{ secrets.RELEASE_GPG_USER_NAME }}"
-          git config --global user.signingkey "${{ steps.import_gpg.outputs.fingerprint }}"
-          git tag -s ${{ steps.release.outputs.version }}
+          git config --global user.email "${{ secrets.GPG_EMAIL }}"
+          git config --global user.name "${{ secrets.GPG_USER_NAME }}"
+          git config --global user.signingkey "${{ steps.tag_gpg.outputs.fingerprint }}"
+          git tag -s ${{ steps.release.outputs.version }} -m "Github Release"
           git push --tags
 
       - name: Create GitHub release
