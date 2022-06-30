@@ -35,20 +35,20 @@ jobs:
 
           echo ::set-output name=version::$version
 
-      - name: Import GPG Key For Tags
-        id: tag_gpg
+      - name: Import GPG Key For Terraform
+        id: release_gpg
         uses: hashicorp/ghaction-import-gpg@78437f97569a473e42b227be84d4084c2dfb49ba # v2.1.0
         env:
-          GPG_PRIVATE_KEY: ${{ secrets.PR_BOT_GPG_PRIVATE_KEY }}
-          PASSPHRASE: ${{ secrets.PR_BOT_GPG_PASSPHRASE }}
+          GPG_PRIVATE_KEY: ${{ secrets.RELEASE_GPG_PRIVATE_KEY }}
+          PASSPHRASE: ${{ secrets.RELEASE_GPG_PASSPHRASE }}
 
       - name: Add GPG Key And Sign Tag
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          git config --global user.email "${{ secrets.PR_BOT_EMAIL }}"
-          git config --global user.name "${{ secrets.PR_BOT_GITHUB_USERNAME }}"
-          git config --global user.signingkey "${{ steps.tag_gpg.outputs.fingerprint }}"
+          git config --global user.email "${{ secrets.RELEASE_BOT_EMAIL }}"
+          git config --global user.name "${{ secrets.RELEASE_BOT_GITHUB_USERNAME }}"
+          git config --global user.signingkey "${{ steps.release_gpg.outputs.fingerprint }}"
           git tag -s ${{ steps.release.outputs.version }} -m "Github Release"
           git push --tags
 
@@ -77,13 +77,6 @@ jobs:
             ${{ runner.os }}-go-
 
       - run: go mod download
-
-      - name: Import GPG Key For Terraform
-        id: release_gpg
-        uses: hashicorp/ghaction-import-gpg@78437f97569a473e42b227be84d4084c2dfb49ba # v2.1.0
-        env:
-          GPG_PRIVATE_KEY: ${{ secrets.RELEASE_GPG_PRIVATE_KEY }}
-          PASSPHRASE: ${{ secrets.RELEASE_GPG_PASSPHRASE }}
 
       - uses: goreleaser/goreleaser-action@68acf3b1adf004ac9c2f0a4259e85c5f66e99bef # v2.9.1
         with:
