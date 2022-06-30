@@ -58,9 +58,6 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          git config --global user.email "bot@ockam.io"
-          git config --global user.name "Ockam Bot"
-
           release_name="release_$(date +'%d-%m-%Y')"
 
           # Checkout to release branch
