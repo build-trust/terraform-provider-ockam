@@ -28,13 +28,13 @@ jobs:
         id: import_gpg
         uses: hashicorp/ghaction-import-gpg@78437f97569a473e42b227be84d4084c2dfb49ba
         env:
-          GPG_PRIVATE_KEY: '${{ secrets.GPG_PRIVATE_KEY }}'
-          PASSPHRASE: '${{ secrets.GPG_PASSPHRASE }}'
+          GPG_PRIVATE_KEY: '${{ secrets.PR_BOT_GPG_PRIVATE_KEY }}'
+          PASSPHRASE: '${{ secrets.PR_BOT_GPG_PASSPHRASE }}'
 
       - name: Add GPG Key
         run: |
-          git config --global user.email "${{ secrets.GPG_EMAIL }}"
-          git config --global user.name "${{ secrets.GPG_USER_NAME }}"
+          git config --global user.email "${{ secrets.PR_BOT_EMAIL }}"
+          git config --global user.name "${{ secrets.PR_BOT_GITHUB_USERNAME }}"
           git config --global user.signingkey "${{ steps.import_gpg.outputs.fingerprint }}"
 
       - name: Bump Terraform Version
