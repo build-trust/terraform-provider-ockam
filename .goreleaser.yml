@@ -35,3 +35,6 @@ signs:
 
 changelog:
   skip: true
+
+release:
+  draft: true
