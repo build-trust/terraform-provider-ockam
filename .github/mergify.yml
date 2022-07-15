@@ -1,0 +1,26 @@
+# Reference https://doc.mergify.io/configuration.html
+
+queue_rules:
+  - name: main
+    conditions: []
+
+pull_request_rules:
+  - name: enqueue for merge to main
+
+    actions:
+      queue:
+        name: main
+        method: rebase
+        update_method: rebase
+        require_branch_protection: true
+
+    conditions:
+      - base=main
+      - label=ready-for-merge
+
+      - or:
+        - author=mrinalwadhwa
+        - and:
+          - "approved-reviews-by=@approvers"
+          - "#approved-reviews-by>=1"
+          - "#changes-requested-reviews-by=0"
