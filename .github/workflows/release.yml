@@ -45,17 +45,6 @@ jobs:
           gpg_name: '${{ secrets.RELEASE_BOT_GITHUB_USERNAME }}'
           gpg_email: '${{ secrets.RELEASE_BOT_EMAIL }}'
 
-      - name: Create GitHub release
-        id: release_upload_url
-        uses: actions/create-release@4c11c9fe1dcd9636620a16455165783b20fc7ea0
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          release_name: '${{ steps.release.outputs.version }}'
-          tag_name: '${{ steps.release.outputs.version }}'
-          body: 'Ockam Terraform Provider - ${{ steps.release.outputs.version }}'
-          draft: true
-
       - uses: actions/cache@0865c47f36e68161719c5b124609996bb5c40129
         with:
           path: |
