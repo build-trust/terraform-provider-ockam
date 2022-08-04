@@ -4,7 +4,7 @@ package provider
 // for release automation to work
 
 const (
-	version = "0.67.0"
+	version = "0.68.0"
 	baseURL = "https://github.com/ockam-network/ockam/releases/download/ockam_v%s/ockam.%s-%s"
 	binary  = "ockam-v" + version
 	arm64   = "arm64"
