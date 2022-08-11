@@ -45,7 +45,7 @@ jobs:
           gpg_name: '${{ secrets.RELEASE_BOT_GITHUB_USERNAME }}'
           gpg_email: '${{ secrets.RELEASE_BOT_EMAIL }}'
 
-      - uses: actions/cache@0865c47f36e68161719c5b124609996bb5c40129
+      - uses: actions/cache@a7c34adf76222e77931dedbf4a45b2e4648ced19
         with:
           path: |
             ~/.cache/go-build
