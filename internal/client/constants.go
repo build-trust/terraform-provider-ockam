@@ -1,4 +1,4 @@
-package provider
+package client
 
 // Note This file if touched must be updated in ./github/constants.go.template
 // for release automation to work
