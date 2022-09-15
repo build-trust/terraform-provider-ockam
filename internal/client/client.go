@@ -1,4 +1,4 @@
-package provider
+package client
 
 import (
 	"bytes"
@@ -30,20 +30,14 @@ func NewClient() (*Client, error) {
 }
 
 // Run executes a command to the Ockam binary and returns the stdout results.
-func (c *Client) Run(command string, dir string) (string, error) {
-	cmd := exec.Command(c.path, command)
-	cmd.Env = []string{fmt.Sprintf("OCKAM_DIR=%s", dir)}
+func (c *Client) Run(command ...string) (string, error) {
+	cmd := exec.Command(c.path, command...)
+
 	var out bytes.Buffer
 	cmd.Stdout = &out
 
 	err := cmd.Run()
 	return strings.TrimSuffix(out.String(), "\n"), err
-}
-
-// Read reads files on disk that the Ockam binary creates and returns the contents as a string.
-func (c *Client) Read(filename string, dir string) (string, error) {
-	contents, err := os.ReadFile(filepath.Clean(filepath.Join(dir, filename)))
-	return strings.TrimSuffix(string(contents), "\n"), err
 }
 
 // downloadBinary downloads the Ockam binary and places it in the user's cache.
