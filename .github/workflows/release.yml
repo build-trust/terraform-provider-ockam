@@ -31,7 +31,7 @@ jobs:
           echo ::set-output name=version::$version
 
       - name: Checkout Terraform Repo
-        uses: actions/checkout@2541b1294d2704b0964813337f33b291d3f8596b
+        uses: actions/checkout@24cb9080177205b6e8c946b17badbe402adc938f
         with:
           fetch-depth: 0
           ref: ${{ steps.release.outputs.version }}
