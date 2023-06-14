@@ -56,7 +56,7 @@ jobs:
 
       - run: go mod download
 
-      - uses: goreleaser/goreleaser-action@68acf3b1adf004ac9c2f0a4259e85c5f66e99bef # v2.9.1
+      - uses: goreleaser/goreleaser-action@336e29918d653399e599bfca99fadc1d7ffbc9f7 # v2.9.1
         with:
           version: latest
           args: release --rm-dist
